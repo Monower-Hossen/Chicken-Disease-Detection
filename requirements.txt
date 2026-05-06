@@ -1,0 +1,27 @@
+# Core ML/DL
+tensorflow>=2.20.0
+numpy
+pandas
+
+# Image Processing
+opencv-python
+pillow
+matplotlib
+seaborn
+scipy
+
+# Web
+flask
+flask-cors
+gunicorn
+
+# Utils
+python-box
+pyyaml
+ensure
+joblib
+python-dotenv
+
+# Dev
+ipykernel
+notebook
