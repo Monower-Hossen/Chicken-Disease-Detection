@@ -11,6 +11,7 @@ list_of_files = [
     ".github/workflows/.gitkeep", # For CI/CD deployment
     f"src/{project_name}/__init__.py",
     f"src/{project_name}/components/__init__.py",
+    f"src/{project_name}/utils/common.py",
     f"src/{project_name}/utils/__init__.py",
     f"src/{project_name}/config/__init__.py",
     f"src/{project_name}/config/configuration.py",
@@ -22,26 +23,30 @@ list_of_files = [
     "params.yaml",   # For Hyperparameters
     "requirements.txt",
     "setup.py",
-    "research/trials.ipynb", # For experimentation
+    "research/01_data_ingestion.ipynb",
+    "research/02_prepare_base_model.ipynb",
+    "research/03_model_training.ipynb",
+    "research/04_model_evaluation.ipynb",
+    "main.py",
+    "app.py",
+    "Dockerfile",
+    ".gitignore",
     "templates/index.html",   # For Flask/FastAPI UI
-    "test.py"
+    "test.py",
 ]
 
-
 for filepath in list_of_files:
-    filepath = Path(filepath)
-    filedir, filename = os.path.split(filepath)
+    filepath_obj = Path(filepath)
 
-    # Create directory if it doesn't exist
-    if filedir != "":
-        os.makedirs(filedir, exist_ok=True)
-        logging.info(f"Creating directory; {filedir} for the file: {filename}")
+    # Create directory if it doesn't exist (handles root directory '.' safely)
+    filepath_obj.parent.mkdir(parents=True, exist_ok=True)
 
-    # Create empty file if it doesn't exist or is empty
-    if (not os.path.exists(filepath)) or (os.path.getsize(filepath) == 0):
-        with open(filepath, "w") as f:
-            pass
-            logging.info(f"Creating empty file: {filepath}")
-
-    else:
-        logging.info(f"{filename} already exists")
+    try:
+        # Create empty file if it doesn't exist or is currently 0 bytes
+        if not filepath_obj.exists() or filepath_obj.stat().st_size == 0:
+            filepath_obj.touch()
+            logging.info(f"Created/verified empty file: {filepath_obj}")
+        else:
+            logging.info(f"File already exists and is not empty: {filepath_obj}")
+    except Exception as e:
+        logging.error(f"Error handling file {filepath_obj}: {e}")
