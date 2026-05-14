@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Disease Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #2c3e50; margin-bottom: 20px; }
+        .upload-section {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .upload-section:hover { background: #ebf5fb; }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #2980b9; }
+        .btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Chicken Disease Classifier</h1>
+        
+        <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+            <p>Click to select or drag and drop a fecal image</p>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <img id="imagePreview" src="" alt="Image Preview">
+        </div>
+
+        <button id="predictBtn" class="btn" disabled>Predict Disease</button>
+        
+        <div class="loader" id="loader"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('imagePreview');
+        const predictBtn = document.getElementById('predictBtn');
+        const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(file);
+                predictBtn.disabled = false;
+                resultDiv.innerHTML = '';
+            }
+        });
+
+        predictBtn.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            loader.style.display = 'block';
+            predictBtn.disabled = true;
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/predict', { method: 'POST', body: formData });
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultDiv.innerHTML = `<span style="color: #e74c3c;">Error: ${data.error}</span>`;
+                } else {
+                    resultDiv.innerHTML = `Result: <span style="color: #27ae60;">${data.image}</span>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<span style="color: #e74c3c;">Failed to connect to server</span>`;
+            } finally {
+                loader.style.display = 'none';
+                predictBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

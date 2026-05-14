@@ -1,17 +1,28 @@
 import os
 import urllib.request as request
 import zipfile
+from pathlib import Path
 from chicken_classifier import logger
 from chicken_classifier.utils.common import get_size
 from chicken_classifier.entity.config_entity import DataIngestionConfig
-from pathlib import Path
 
 class DataIngestion:
     def __init__(self, config: DataIngestionConfig):
         self.config = config
 
     def download_file(self):
+        """
+        Downloads the file from the source URL.
+        """
         if not os.path.exists(self.config.local_data_file):
+            logger.info(f"Downloading from {self.config.source_URL}...")
+            
+            # Some servers block requests without a proper User-Agent. 
+            # Installing a global opener with a browser-like header.
+            opener = request.build_opener()
+            opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')]
+            request.install_opener(opener)
+
             filename, headers = request.urlretrieve(
                 url = self.config.source_URL,
                 filename = self.config.local_data_file
