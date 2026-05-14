@@ -25,3 +25,11 @@ python-dotenv
 # Dev
 ipykernel
 notebook
+
+
+-e .
+
+
+sqlalchemy
+mysql-connector-python
+python-dotenv
