@@ -1,18 +1,16 @@
 # Chicken Disease Detection using Deep Learning
 
-This project implements an advanced deep learning solution for the accurate and early detection of various chicken diseases from image data. By leveraging state-of-the-art Convolutional Neural Networks (CNNs), the system aims to provide a crucial tool for poultry farmers to identify health issues swiftly, thereby minimizing disease spread, reducing economic losses, and improving overall flock health and productivity.
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)](https://tensorflow.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20App-lightgrey)](https://flask.palletsprojects.com/)
+[![DVC](https://img.shields.io/badge/DVC-Data%20Version%20Control-blueviolet)](https://dvc.org/)
 
-Early disease identification is paramount in poultry farming, where outbreaks can lead to devastating consequences. This system offers a robust, AI-powered approach to automate and enhance the diagnostic process.
+This project implements an advanced deep learning solution for the accurate and early detection of various chicken diseases from image data. By leveraging state-of-the-art Convolutional Neural Networks (CNNs), the system aims to provide a crucial tool for poultry farmers to identify health issues swiftly, thereby minimizing disease spread, reducing economic losses, and improving overall flock health and productivity.
 
 ## Features
 
 *   **Advanced Image Classification**: Utilizes deep learning models (specifically CNNs) to classify chicken images into "Healthy" or various "Diseased" categories with high accuracy. This enables rapid and non-invasive diagnosis.
-*   **Robust Data Handling & Configuration Management**: The `src/chicken_classifier/utils/common.py` module provides a suite of essential utility functions:
-    *   **Configuration Management**: Seamlessly reads and writes YAML and JSON configuration files, ensuring standardized parameter management for experiments and deployments.
-    *   **Directory Management**: Automated creation of necessary directory structures for organized data, logs, and model artifacts.
-    *   **Model Persistence**: Efficient saving and loading of binary data (e.g., trained machine learning models using `joblib`) for reusability and deployment.
-    *   **Image Preprocessing**: Utilities for decoding base64 encoded images, facilitating web-based image submissions.
-    *   **System Utilities**: Functions for calculating file sizes, useful for monitoring and resource management.
+*   **Robust Data Handling**: Includes a custom utility suite in `common.py` for standardized I/O, configuration management using `ConfigBox`, and type-safe development via `ensure_annotations`.
 *   **Modular and Scalable Architecture**: The project is structured with a clear separation of concerns, following MLOps best practices. This modularity enhances maintainability, facilitates collaboration, and allows for easy integration of new features or model architectures.
 *   **Web-based Prediction Interface**: Includes a lightweight Flask web application (`app.py`) that provides a user-friendly interface for uploading images and receiving real-time disease predictions.
 *   **MLOps Readiness**: Incorporates `dvc.yaml` for Data Version Control and `params.yaml` for managing hyperparameters, laying the groundwork for reproducible machine learning pipelines and easier deployment.
@@ -22,27 +20,23 @@ Early disease identification is paramount in poultry farming, where outbreaks ca
 *   **Python**: Primary programming language.
 *   **Flask**: Web framework for the prediction API.
 *   **TensorFlow/Keras**: (Implied by deep learning) For building and training CNN models.
-*   **scikit-learn/joblib**: For model serialization.
-*   **PyYAML, json, box**: For configuration management.
-*   **DVC (Data Version Control)**: For managing data and model versions (planned/integrated).
-*   **Docker**: For containerization and deployment (planned/integrated).
+*   **DVC (Data Version Control)**: For managing data and model pipeline versioning.
+*   **Docker**: For containerization.
+*   **GitHub Actions**: For CI/CD implementation.
 
-## Installation
-
-To set up and run this project locally, please follow these steps:
+## Getting Started
 
 ### Prerequisites
+* Python 3.8+
+* Docker (Optional, for containerized execution)
 
-Ensure you have Python 3.8+ installed on your system.
+### Installation
 
-### Steps
-
-1.  **Clone the repository**:
+1. **Clone the repository**:
     ```bash
     git clone https://github.com/Monower-Hossen/Chicken-Disease-Detection
     cd Chicken-Disease-Detection
     ```
-    *(Replace `your-username` with the actual GitHub username or organization.)*
 
 2.  **Create a virtual environment (recommended)**:
     It's highly recommended to use a virtual environment to manage project dependencies and avoid conflicts with other Python projects.
@@ -52,23 +46,29 @@ Ensure you have Python 3.8+ installed on your system.
     # venv\Scripts\activate   # On Windows
     ```
 
-3.  **Install dependencies**:
+3. **Install dependencies**:
     ```bash
     pip install -r requirements.txt
-    # If you plan to use DVC, install it separately:
-    # pip install dvc
     ```
+
+## Development Workflow
+
+To add new features or update the pipeline, follow this modular workflow:
+
+1.  Update `config/config.yaml` (Paths and directories).
+2.  Update `params.yaml` (Model hyperparameters).
+3.  Update the **Entity** (`src/chicken_classifier/entity`).
+4.  Update the **Configuration Manager** (`src/chicken_classifier/config/configuration.py`).
+5.  Update the **Components** (`src/chicken_classifier/components`).
+6.  Update the **Pipeline** (`src/chicken_classifier/pipeline`).
+7.  Update `main.py`.
+8.  Update `app.py`.
 
 ## Usage
 
-This project supports both model training and real-time prediction via a web interface.
-
-### 1. Model Training and Experimentation
-
-The `research/` directory contains Jupyter notebooks for exploratory data analysis, model prototyping, and training experiments. For a full end-to-end ML pipeline execution (data ingestion, preparation, training, evaluation), you would typically run the `main.py` script.
-
+### Training Pipeline
+Execute the full pipeline (Data Ingestion -> Base Model -> Training -> Evaluation):
 ```bash
-# Example: Running the main ML pipeline (ensure configurations in config/ and params/ are set)
 python main.py
 ```
 
@@ -118,5 +118,3 @@ Once the server is running, open your web browser and navigate to `http://0.0.0.
 ## Contributing
 
 Contributions are welcome! Please feel free to open issues or submit pull requests.
-
-## License
