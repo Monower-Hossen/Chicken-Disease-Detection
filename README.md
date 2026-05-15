@@ -39,7 +39,7 @@ Ensure you have Python 3.8+ installed on your system.
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/Chicken-Disease-Detection.git
+    git clone https://github.com/Monower-Hossen/Chicken-Disease-Detection
     cd Chicken-Disease-Detection
     ```
     *(Replace `your-username` with the actual GitHub username or organization.)*
