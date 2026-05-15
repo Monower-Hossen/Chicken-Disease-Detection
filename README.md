@@ -5,14 +5,14 @@
 [![Flask](https://img.shields.io/badge/Flask-Web%20App-lightgrey)](https://flask.palletsprojects.com/)
 [![DVC](https://img.shields.io/badge/DVC-Data%20Version%20Control-blueviolet)](https://dvc.org/)
 
-This project implements an advanced deep learning solution for the accurate and early detection of various chicken diseases from image data. By leveraging state-of-the-art Convolutional Neural Networks (CNNs), the system aims to provide a crucial tool for poultry farmers to identify health issues swiftly, thereby minimizing disease spread, reducing economic losses, and improving overall flock health and productivity.
+This project implements an advanced deep learning solution for the accurate and early detection of various chicken diseases from image data. By leveraging state-of-the-art Convolutional Neural Networks (VGG16), the system provides a robust tool for poultry farmers to identify health issues swiftly, minimizing disease spread and improving overall productivity.
 
 ## Features
 
 *   **Advanced Image Classification**: Utilizes deep learning models (specifically CNNs) to classify chicken images into "Healthy" or various "Diseased" categories with high accuracy. This enables rapid and non-invasive diagnosis.
 *   **Robust Data Handling**: Includes a custom utility suite in `common.py` for standardized I/O, configuration management using `ConfigBox`, and type-safe development via `ensure_annotations`.
 *   **Modular and Scalable Architecture**: The project is structured with a clear separation of concerns, following MLOps best practices. This modularity enhances maintainability, facilitates collaboration, and allows for easy integration of new features or model architectures.
-*   **Web-based Prediction Interface**: Includes a lightweight Flask web application (`app.py`) that provides a user-friendly interface for uploading images and receiving real-time disease predictions.
+*   **Real-time Prediction API**: A Flask web application provides a user-friendly interface and a RESTful API endpoint for instant disease diagnosis.
 *   **MLOps Readiness**: Incorporates `dvc.yaml` for Data Version Control and `params.yaml` for managing hyperparameters, laying the groundwork for reproducible machine learning pipelines and easier deployment.
 
 ## Technologies Used
@@ -20,9 +20,9 @@ This project implements an advanced deep learning solution for the accurate and 
 *   **Python**: Primary programming language.
 *   **Flask**: Web framework for the prediction API.
 *   **TensorFlow/Keras**: (Implied by deep learning) For building and training CNN models.
-*   **DVC (Data Version Control)**: For managing data and model pipeline versioning.
+*   **DVC**: For managing data and model pipeline versioning.
 *   **Docker**: For containerization.
-*   **GitHub Actions**: For CI/CD implementation.
+*   **AWS CLI**: Integrated for cloud deployment compatibility.
 
 ## Getting Started
 
@@ -51,23 +51,44 @@ This project implements an advanced deep learning solution for the accurate and 
     pip install -r requirements.txt
     ```
 
+## ML Pipeline Stages
+
+The project is divided into 4 main stages, all orchestrated via `main.py`:
+
+1.  **Data Ingestion**: Downloads data from source URLs, extracts zip files, and prepares the internal folder structure.
+2.  **Prepare Base Model**: Initializes the VGG16 model with ImageNet weights, updates the top layers for custom classification, and compiles the model with a custom learning rate.
+3.  **Model Training**: Handles the training process using data augmentation and saves the trained `.keras` artifact.
+4.  **Model Evaluation**: Evaluates the model against validation data and saves performance metrics in JSON format for tracking.
+
+## Configuration Management
+
+The system uses a centralized configuration approach:
+*   **`config/config.yaml`**: Defines project paths (artifacts, data ingestion, training).
+*   **`params.yaml`**: Contains hyperparameters like `IMAGE_SIZE`, `LEARNING_RATE`, `BATCH_SIZE`, and `EPOCHS`.
+*   **`entity`**: Defines type-safe configuration classes for each pipeline stage.
+
 ## Development Workflow
 
 To add new features or update the pipeline, follow this modular workflow:
 
-1.  Update `config/config.yaml` (Paths and directories).
-2.  Update `params.yaml` (Model hyperparameters).
-3.  Update the **Entity** (`src/chicken_classifier/entity`).
-4.  Update the **Configuration Manager** (`src/chicken_classifier/config/configuration.py`).
-5.  Update the **Components** (`src/chicken_classifier/components`).
-6.  Update the **Pipeline** (`src/chicken_classifier/pipeline`).
-7.  Update `main.py`.
-8.  Update `app.py`.
+1. Update `config/config.yaml`.
+2. Update `params.yaml`.
+3. Update the **Entity** (`src/chicken_classifier/entity`).
+4. Update the **Configuration Manager** (`src/chicken_classifier/config/configuration.py`).
+5. Update the **Components** (`src/chicken_classifier/components`).
+6. Update the **Pipeline** (`src/chicken_classifier/pipeline`).
+7. Update `main.py`.
+8. Update `app.py`.
 
 ## Usage
 
 ### Training Pipeline
-Execute the full pipeline (Data Ingestion -> Base Model -> Training -> Evaluation):
+
+To reproduce the entire experiment or train on new data:
+```bash
+dvc repro
+```
+Alternatively, run manually:
 ```bash
 python main.py
 ```
